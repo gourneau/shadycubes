@@ -45,16 +45,21 @@ StripWalker[] walkers;
 int animationTick = 0;
 
 
+void walkerInit(StripWalker w) {
+      w.stripIdx = rand.nextInt(cubeList.size());
+      w.walkerDelta = rand.nextBoolean() ? 1 : -1;
+      w.r = rand.nextDouble();
+      w.g = rand.nextDouble();
+      w.b = rand.nextDouble();
+      w.a = 1.0;
+}
+
+
 void randomwalklovers_setup() {
      walkers = new StripWalker[nWalkers];
     for (int idx=0; idx < walkers.length; ++idx) {
       walkers[idx] = new StripWalker();
-      walkers[idx].stripIdx = rand.nextInt(cubeList.size());
-      walkers[idx].walkerDelta = rand.nextBoolean() ? 1 : -1;
-      walkers[idx].r = rand.nextDouble();
-      walkers[idx].g = rand.nextDouble();
-      walkers[idx].b = rand.nextDouble();
-      walkers[idx].a = 1.0;
+      walkerInit(walkers[idx]);
     }  
 }
 
@@ -74,12 +79,8 @@ void randomwalklovers_draw() {
     }
     for (int idx=0; idx < walkers.length; ++idx) {
       walkers[idx] = new StripWalker();
-      walkers[idx].stripIdx = rand.nextInt(cubeList.size());
-      walkers[idx].walkerDelta = rand.nextBoolean() ? 1 : -1;
-      walkers[idx].r = rand.nextDouble();
-      walkers[idx].g = rand.nextDouble();
-      walkers[idx].b = rand.nextDouble();
-      walkers[idx].a = 1.0;
+      walkerInit(walkers[idx]);
+      
     }  
   } else if (animationTick % 10 == 0) { 
     globalAlpha = 1.0;

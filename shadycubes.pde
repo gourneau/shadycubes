@@ -396,7 +396,7 @@ void draw(){
  }*/
 
 
- //matrixread_draw();
+ matrixread_draw();
  
  render.endGL();
  rot+=10;

@@ -28,9 +28,9 @@ void fillStrip(cuPoint[] pts,float r, float g, float b,float a) {
 
 
 void randomwalklovers_tick() {  
-  fillStrip(stripList.get(curStripeIdx), 1, 1,1,1);  
+  fillStrip((cuPoint[])stripList.get(curStripeIdx), 1, 1,1,1);  
   curStripeIdx = (curStripeIdx + 1) % stripList.size();
-  fillStrip(stripList.get(curStripeIdx), 1, 1,1,1);
+  fillStrip((cuPoint[])stripList.get(curStripeIdx), 1, 1,1,1);
   cuPoint[] curStripe = (cuPoint[]) stripList.get(curStripeIdx);  
 }
 

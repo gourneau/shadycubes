@@ -3,7 +3,7 @@
 Random rand = new java.util.Random(42);
 List walkerStripes = new ArrayList();
 
-cuStrip curStripe;
+int curStripeIdx;
 
 void randomwalklovers_setup() {
   
@@ -17,16 +17,20 @@ void randomwalklovers_setup() {
         }
       } 
    }
+   curStripeIdx = rand.nextInt(stripList.size());
 }
 
-
-void randomwalklovers_tick() {
-  
-  cuPoint[] pts = (cuPoint[]) stripList.get(rand.nextInt(stripList.size()));  
+void fillStrip(cuPoint[] pts,float r, float g, float b,float a) {
   for (int idx=0; idx < pts.length; ++idx) {
-    pts[idx].setColor(0,0,0); 
+    pts[idx].setColor(r,g,b); 
   }
-//   ax = (ax+1) % 127;
-//    pr=random(1); pg=random(1.0); pb=random(1.0);
-
 }
+
+
+void randomwalklovers_tick() {  
+  fillStrip(stripList.get(curStripeIdx), 1, 1,1,1);  
+  curStripeIdx = (curStripeIdx + 1) % stripList.size();
+  fillStrip(stripList.get(curStripeIdx), 1, 1,1,1);
+  cuPoint[] curStripe = (cuPoint[]) stripList.get(curStripeIdx);  
+}
+

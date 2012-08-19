@@ -67,6 +67,16 @@ void oscEvent(OscMessage om) {
       p.setColor(0,g,b);
     }  
   }
+  if(om.checkAddrPattern("/gyrosc/gyr")==true){
+    x = om.get(0).floatValue();
+    y = om.get(0).floatValue();
+    z = om.get(0).floatValue();
+    xr+=x/100;
+    yr+=y/100;
+    zr+=z/100;
+        
+  }
+  
   //println(om.getBytes());
   //byte[] payload = om.getBytes();
   //println(payload.length);

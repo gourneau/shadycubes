@@ -28,6 +28,8 @@ float max_z=-256*256;
 class cuPoint{
   float r,g,b,a;
   float x,y,z;
+  float fx,fy,fz;
+  int   ix,iy,iz;
   float m[]  = new float[16];
   cuPoint (float cr, float cg, float cb) {
     r=cr;
@@ -47,6 +49,12 @@ class cuPoint{
     r=cr;
     g=cg;
     b=cb;
+    a=0.6;
+  }
+  void setColor (int cr, int cg, int cb) {
+    r=cr/255.0;
+    g=cg/255.0;
+    b=cb/255.0;
     a=0.6;
   }
   void setColor (float cr, float cg, float cb, float ca) {
@@ -238,6 +246,7 @@ float xt=114.0, yt=-81.0, zt=138.0;
 cuPoint zp;
 
 ArrayList[][][] volume = new ArrayList[128][256][128];
+ArrayList[][] surface = new ArrayList[128][256];
 
 void setup(){
  
@@ -342,17 +351,49 @@ void setup(){
      }
    }
  }
+ for(int i=0; i<128; i++){
+   for(int j=0; j<256; j++){
+       surface[i][j]=new ArrayList();
+   }
+ }
  
-   
+//(p.x+abs(min_x))/(max_x+abs(min_x)) < x
+ println(min_x);
+ println(max_x);
+ 
  for(int i=0; i<pointList.size(); i++){
    cuPoint p = (cuPoint)pointList.get(i);
-   int x = (int)((p.x + 20)/1.5);
-   int y = (int)((p.y + 20)/1.5);
-   int z = (int)((p.z + 20)/1.5);
-   if(x>0 && y>0 && z>0) { volume[x][y][z].add(p);}
+   float fx, fy, fz;
+   
+   fx = (p.x + abs(min_x));
+   fx/=(max_x+abs(min_x));
+   fx*=127;
+   
+   fy = p.y + abs(min_y);
+   fy/=(max_y+abs(min_y));
+   fy*=255;
+
+   fz = (p.z + abs(min_z));
+   fz/=(max_z+abs(min_z));
+   fz*=127;
+   
+   p.fx=fx;
+   p.fy=fy;
+   p.fz=fz;
+      
+   int ix = (int)fx;
+   int iy = (int)fy;
+   int iz = (int)fz;
+   
+   p.ix=ix;
+   p.iy=iy;
+   p.iz=iz;
+   
+   volume[ix][iy][iz].add(p);
+   surface[iz][iy].add(p);
  }  
 
-  randomwalklovers_setup();
+ screenread_setup();
  render.endGL(); 
 
 }  
@@ -395,7 +436,7 @@ void draw(){
  }*/
 
 
- randomwalklovers_draw();
+ screenread_draw();
  //randomwalklovers_draw();
  render.endGL();
  rot+=10;

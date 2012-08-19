@@ -26,19 +26,33 @@ float max_z=-256*256;
 
 
 class cuPoint{
-  float r,g,b;
+  float r,g,b,a;
   float x,y,z;
   float m[]  = new float[16];
   cuPoint (float cr, float cg, float cb) {
     r=cr;
     g=cg;
     b=cb;
+    a=0.6;
+  }
+  cuPoint (float cr, float cg, float cb, float ca) {
+    r=cr;
+    g=cg;
+    b=cb;
+    a=ca;
     pointList.add(this);
   }
   void setColor (float cr, float cg, float cb) {
     r=cr;
     g=cg;
     b=cb;
+    a=0.6;
+  }
+  void setColor (float cr, float cg, float cb, float ca) {
+    r=cr;
+    g=cg;
+    b=cb;
+    a=ca;
   }
   void updatePosition(){
      gl.glGetFloatv(GL.GL_MODELVIEW_MATRIX, m, 0);
@@ -56,7 +70,7 @@ class cuPoint{
   }
   void draw(boolean do_update) {
    gl.glBegin(GL.GL_POINTS);
-     gl.glColor4f(r,g,b,0.6);
+     gl.glColor4f(r,g,b,a);
      //gl.glColor4f(x/82,y/192,z/80,0.6);
      gl.glVertex3f(0,0,0);
    gl.glEnd();
@@ -105,12 +119,13 @@ class cuClip{
         strips[1].updateColor(i, 0, i/16.0, 0);
         strips[2].updateColor(i, 0, 0, i/16.0);
      }
+     
      cuPoint[] c = new cuPoint[3*16];
      for(int i=0; i<3; i++){
        for(int j=0; j<16; j++){
           c[i*16 + j] = strips[i].points[j];
        }
-     }
+     }       
      clipList.add(c);
    }
    void draw(boolean do_update){
@@ -344,7 +359,6 @@ void draw(){
  render.beginGL();
  gl.glEnable(GL.GL_POINT_SMOOTH);
 
- randomwalklovers_tick() ;
  
  int n=0;
  
@@ -366,6 +380,7 @@ void draw(){
 
 
  
+ randomwalklovers_tick() ;
  render.endGL();
  rot+=10;
 }

@@ -102,7 +102,7 @@ class cuStrip{
    }
    
 }
-
+  
 class cuClip{
    cuStrip[] strips;
    cuClip(){
@@ -232,8 +232,8 @@ float rot=0;
 int s=20;
 cuCube cubes[];
 
-float xr, yr, zr;
-float xt, yt, zt;
+float xr=-0.9299996, yr=0.32999998, zr=1.559999;
+float xt=114.0, yt=-81.0, zt=138.0;
 cuPoint zp;
 
 ArrayList[][][] volume = new ArrayList[128][256][128];
@@ -305,17 +305,34 @@ void setup(){
  cubes[49]= new cuCube(77, 28, 80, 0, 0, 45);
  cubes[50]= new cuCube(53, 22, 80, 0, 0, 45);
  cubes[51]= new cuCube(48, 175, 80, 0, 0, 45);
- cubes[52]= new cuCube(70, 196, 80, 340, 0, 65);
+/* cubes[52]= new cuCube(66, 192, 80, 0, 0, 355);
  cubes[53]= new cuCube(33, 202, 80, 335, 0, 85);
  cubes[54]= new cuCube(32, 176, 80, 0, 0, 20);
  cubes[55]= new cuCube(5.75, 69.5, 0, 0, 0, 80);
- cubes[56]= new cuCube(-1, 53, 0, 40, 70, 70);
+ //cubes[56]= new cuCube(-1, 53, 0, 40, 70, 70);
  cubes[57]= new cuCube(5.5, 24, 0, 175, 0, 115);
+ cubes[60]= new cuCube(40, 164, 120, 0, 0, 12.5);
+ cubes[61]= new cuCube(32, 148, 100, 0, 0, 3);
+ cubes[62]= new cuCube(30, 132, 90, 10, 350, 5);
+ cubes[63]= new cuCube(22,112,95, 330, 355, 0);
+ cubes[65]= new cuCube(38,112,98,335,0,0);
+ cubes[66]= new cuCube(70,164,100,0,0,22);
+ cubes[68]= new cuCube(29,94,105,345,350,350);
+ cubes[69]= new cuCube(30,96,97,325,335,350);
+ cubes[70]= new cuCube(38,96,95,30,0,355);
+ cubes[71]= new cuCube(38,96,95,30,0,355);
+ cubes[72]= new cuCube(44,20,100,0,0,345);
+ cubes[73]= new cuCube(28,24,100,0,0,13);
+ cubes[74]= new cuCube(8,38,100,350,0,0);
+ cubes[75]= new cuCube(20,58,100,0,0,355);
+ cubes[76]= new cuCube(22,32,135,327,345,345);*/
+ 
+  
  
  render.beginGL();
    zp.draw(true);
-   for(int i=1; i<57; i++){
-       cubes[i].draw(true);
+   for(int i=1; i<74; i++){
+       try{cubes[i].draw(true);} catch (Exception e){};
    } 
  render.endGL(); 
  
@@ -337,7 +354,7 @@ void setup(){
    if(x>0 && y>0 && z>0) { volume[x][y][z].add(p);}
  }  
 
-  randomwalklovers_setup();
+  //matrixread_setup();
  
 }  
 
@@ -347,9 +364,9 @@ void draw(){
  background(0);
 
  translate(width/2+xt,height/2+yt,150+zt);
- rotateX(xr);
- rotateY(yr);
- rotateZ(zr);
+ rotateX(-0.9299996+xr);
+ rotateY( 0.32999998+yr);
+ rotateZ( 1.559999+zr);
  
  gl.glMatrixMode(GL.GL_MODELVIEW);
  gl.glLoadIdentity();
@@ -370,8 +387,8 @@ void draw(){
     gl.glVertex2f(82,0);
  gl.glEnd();
   
- for(int i=1; i<57; i++){
-   cubes[i].draw(false);
+ for(int i=1; i<76; i++){
+     try{cubes[i].draw(true);} catch (Exception e){};
  } 
  /*for(int i=0; i<cubes.length; i++){
     cubes[i]=new cuCube(i*16*5,0,i*5,0,0,0,0);
@@ -379,8 +396,8 @@ void draw(){
  }*/
 
 
+ //matrixread_draw();
  
- randomwalklovers_tick() ;
  render.endGL();
  rot+=10;
 }
@@ -451,6 +468,9 @@ void keyPressed() {
   println(max_y);
   println(min_z);
   println(max_z);*/
+  
+//  print(xr); print(" "); print(yr); print(" "); print(zr); print("\n");
+  print(xt); print(" "); print(yt); print(" "); print(zt); print("\n");
 
 }
 

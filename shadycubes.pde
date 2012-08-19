@@ -226,6 +226,7 @@ ArrayList[][][] volume = new ArrayList[128][256][128];
 void setup(){
  
   size(800,600,OPENGL);
+  frameRate(30);
   hint(ENABLE_OPENGL_4X_SMOOTH); 
   xr=yr=zr=0;
 
@@ -320,6 +321,8 @@ void setup(){
    int z = (int)((p.z + 20)/1.5);
    if(x>0 && y>0 && z>0) { volume[x][y][z].add(p);}
  }  
+
+  randomwalklovers_setup();
  
 }  
 
@@ -340,6 +343,8 @@ void draw(){
  
  render.beginGL();
  gl.glEnable(GL.GL_POINT_SMOOTH);
+
+ randomwalklovers_tick() ;
  
  int n=0;
  

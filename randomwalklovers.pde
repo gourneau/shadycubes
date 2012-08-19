@@ -3,9 +3,7 @@
 Random rand = new java.util.Random(42);
 List walkerStripes = new ArrayList();
 
-void randomwalklovers_setup() {
-  
-  
+void randomwalklovers_setup() {  
 }
 
 
@@ -21,3 +19,4 @@ void randomwalklovers_tick() {
       }
     } 
 }
+

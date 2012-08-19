@@ -356,7 +356,7 @@ void setup(){
  }  
 
   matrixread_setup();
- 
+
 }  
 
 float n=0.01;
@@ -398,7 +398,7 @@ void draw(){
 
 
  matrixread_draw();
- 
+ //randomwalklovers_draw();
  render.endGL();
  rot+=10;
 }
@@ -437,7 +437,7 @@ void keyPressed() {
   }*/
   
   if(key==' ') {
-    randomwalklovers_tick();
+    randomwalklovers_draw();
 //    ax = (ax+1) % 127;
 //    pr=random(1); pg=random(1.0); pb=random(1.0);
 //    for(int ay=0; ay<256; ay++){

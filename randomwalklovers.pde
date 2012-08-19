@@ -10,28 +10,37 @@ void fillStrip(int stripIdx,double r, double g, double b,double a) {
   }
 }
 
+double interp(double r, double decay) {
+  return decay*r + (1.0-decay)*0.5; 
+}
 
 class StripWalker {
   int stripIdx;    // indexed in stripList
   int walkerDelta; // +1 or -1 for direction
   int mateTimeout; // how much longer to pause
   double r,g,b,a;  // color
-  
-  void tick() {
+  double tailDecay = 0.9;
+    
+  void tick(boolean animateHead) {
+    if (animateHead) {
     int oldStripIdx = stripIdx;
      stripIdx = (stripIdx + walkerDelta + cubeList.size()) % cubeList.size(); 
-     int MAX_DELTA = 3;
+     fillStrip(stripIdx, r,g,b,globalAlpha * 1.0); 
+     tailDecay = 0.7;  
+    }
+     int MAX_DELTA = 2;
      for (int delta=0; delta < MAX_DELTA; ++delta) {
           int si = (stripIdx - (delta+1)*walkerDelta + cubeList.size()) % cubeList.size();
-          double decay =  Math.exp(-0.3*(delta+1));          
-         fillStrip(si, r*decay,g*decay,b*decay,globalAlpha);
+          double decay = Math.exp(-0.3*(delta+1));
+         fillStrip(si, interp(r,decay),interp(g,decay),interp(b,decay),globalAlpha);
      }   
-     fillStrip(stripIdx, r,g,b,globalAlpha * 1.0); 
+     tailDecay *= 0.9;
+    
   }
 }
 
 
-int nWalkers = 10;
+int nWalkers = 5;
 StripWalker[] walkers;
 int animationTick = 0;
 
@@ -78,8 +87,13 @@ void randomwalklovers_draw() {
        fillStrip(idx, 0.25, 0.25, 0.25, 1); 
     }
     for (int idx=0; idx < walkers.length; ++idx) {
-      walkers[idx].tick();    
+      walkers[idx].tick(true);    
     }  
-  } 
+  }
+//  else if (animationTick % 2 == 0) {
+//   for (int idx=0; idx < walkers.length; ++idx) {
+//      walkers[idx].tick(false);    
+//    } 
+//  } 
 }
 

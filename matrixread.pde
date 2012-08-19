@@ -29,17 +29,46 @@ void oscEvent(OscMessage om) {
        }
     } catch(Exception e) { println(e); }
   }
-  /*float x = om.get(0).floatValue(); 
-  float y = om.get(1).floatValue();
-  
-  for(int i=0; i<pointList.size(); i++){
-    cuPoint p = (cuPoint)pointList.get(i);
-    p.setColor(0,0,0);
-    if(p.x/max_x < x) { p.setColor(1,1,1); }
-    if(p.y/max_y < y) { p.setColor(1,1,1); }    
-  }  
-  println(pointList.size());*/
-  byte[] payload = om.getBytes();
-  println(payload.length);
+  float x,y,z,r,g,b;
+  x=y=z=r=g=b=0;
+  if(om.checkAddrPattern("/5/xy1")==true){
+    x = om.get(0).floatValue(); 
+    y = om.get(1).floatValue();
+    for(int i=0; i<pointList.size(); i++){
+      cuPoint p = (cuPoint)pointList.get(i);
+      p.setColor(0,0,0);
+      if((p.x+abs(min_x))/(max_x+abs(min_x)) < x) { p.setColor(1,1,1); }
+      if((p.y+abs(min_y))/(max_y+abs(min_y)) < y) { p.setColor(1,1,1); }    
+    }  
+  }
+  if(om.checkAddrPattern("/5/xy2")==true){
+    x = om.get(0).floatValue(); 
+    z = om.get(1).floatValue();
+    for(int i=0; i<pointList.size(); i++){
+      cuPoint p = (cuPoint)pointList.get(i);
+      p.setColor(0,0,0);
+      if((p.x+abs(min_x))/(max_x+abs(min_x)) < x) { p.setColor(1,1,1); }
+      if((p.z+abs(min_z))/(max_z+abs(min_z)+1) < z) { p.setColor(1,1,1); }    
+    }  
+  }
+  if(om.checkAddrPattern("/5/xy3")==true){
+    r = om.get(0).floatValue(); 
+    g = om.get(1).floatValue();
+    for(int i=0; i<pointList.size(); i++){
+      cuPoint p = (cuPoint)pointList.get(i);
+      p.setColor(r,g,0);
+    }  
+  }
+  if(om.checkAddrPattern("/5/xy4")==true){
+    g = om.get(0).floatValue(); 
+    b = om.get(1).floatValue();
+    for(int i=0; i<pointList.size(); i++){
+      cuPoint p = (cuPoint)pointList.get(i);
+      p.setColor(0,g,b);
+    }  
+  }
+  //println(om.getBytes());
+  //byte[] payload = om.getBytes();
+  //println(payload.length);
 }
 

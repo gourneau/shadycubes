@@ -306,16 +306,17 @@ void setup(){
  cubes[49]= new cuCube(77, 28, 80, 0, 0, 45);
  cubes[50]= new cuCube(53, 22, 80, 0, 0, 45);
  cubes[51]= new cuCube(48, 175, 80, 0, 0, 45);
-/* cubes[52]= new cuCube(66, 192, 80, 0, 0, 355);
+ cubes[52]= new cuCube(66, 192, 80, 0, 0, 355);
  cubes[53]= new cuCube(33, 202, 80, 335, 0, 85);
  cubes[54]= new cuCube(32, 176, 80, 0, 0, 20);
  cubes[55]= new cuCube(5.75, 69.5, 0, 0, 0, 80);
- //cubes[56]= new cuCube(-1, 53, 0, 40, 70, 70);
- cubes[57]= new cuCube(5.5, 24, 0, 175, 0, 115);
+ cubes[56]= new cuCube(1, 53, 0, 40,70, 70);
+ cubes[57]= new cuCube(-15, 24, 0, 15, 0, 0);
  cubes[60]= new cuCube(40, 164, 120, 0, 0, 12.5);
  cubes[61]= new cuCube(32, 148, 100, 0, 0, 3);
  cubes[62]= new cuCube(30, 132, 90, 10, 350, 5);
  cubes[63]= new cuCube(22,112,95, 330, 355, 0);
+ cubes[64]= new cuCube(35,70,95,0,0,0);
  cubes[65]= new cuCube(38,112,98,335,0,0);
  cubes[66]= new cuCube(70,164,100,0,0,22);
  cubes[68]= new cuCube(29,94,105,345,350,350);
@@ -326,16 +327,12 @@ void setup(){
  cubes[73]= new cuCube(28,24,100,0,0,13);
  cubes[74]= new cuCube(8,38,100,350,0,0);
  cubes[75]= new cuCube(20,58,100,0,0,355);
- cubes[76]= new cuCube(22,32,135,327,345,345);*/
+ cubes[76]= new cuCube(22, 32, 120, 345, 327, 345);  
  
-  
- 
- render.beginGL();
-   zp.draw(true);
-   for(int i=1; i<74; i++){
-       try{cubes[i].draw(true);} catch (Exception e){};
-   } 
- render.endGL(); 
+ zp.draw(true);
+ for(int i=1; i<cubes.length; i++){
+     try{cubes[i].draw(true);} catch (Exception e){};
+ } 
  
 //ArrayList[][][] volume = new ArrayList[90][200][100];
  for(int i=0; i<128; i++){
@@ -355,7 +352,8 @@ void setup(){
    if(x>0 && y>0 && z>0) { volume[x][y][z].add(p);}
  }  
 
-  matrixread_setup();
+  randomwalklovers_setup();
+ render.endGL(); 
 
 }  
 
@@ -388,7 +386,7 @@ void draw(){
     gl.glVertex2f(82,0);
  gl.glEnd();
   
- for(int i=1; i<76; i++){
+ for(int i=1; i<cubes.length; i++){
      try{cubes[i].draw(false);} catch (Exception e){};
  } 
  /*for(int i=0; i<cubes.length; i++){
@@ -397,7 +395,7 @@ void draw(){
  }*/
 
 
- matrixread_draw();
+ randomwalklovers_draw();
  //randomwalklovers_draw();
  render.endGL();
  rot+=10;

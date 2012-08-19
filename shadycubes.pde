@@ -34,6 +34,7 @@ class cuPoint{
     g=cg;
     b=cb;
     a=0.6;
+    pointList.add(this);
   }
   cuPoint (float cr, float cg, float cb, float ca) {
     r=cr;
@@ -354,7 +355,7 @@ void setup(){
    if(x>0 && y>0 && z>0) { volume[x][y][z].add(p);}
  }  
 
-  //matrixread_setup();
+  matrixread_setup();
  
 }  
 
@@ -388,7 +389,7 @@ void draw(){
  gl.glEnd();
   
  for(int i=1; i<76; i++){
-     try{cubes[i].draw(true);} catch (Exception e){};
+     try{cubes[i].draw(false);} catch (Exception e){};
  } 
  /*for(int i=0; i<cubes.length; i++){
     cubes[i]=new cuCube(i*16*5,0,i*5,0,0,0,0);

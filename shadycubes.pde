@@ -397,17 +397,17 @@ void keyPressed() {
   }*/
   
   if(key==' ') {
-    
-    ax = (ax+1) % 127;
-    pr=random(1); pg=random(1.0); pb=random(1.0);
-    for(int ay=0; ay<256; ay++){
-      for(int az=0; az<128; az++){
-        for(int ap=0; ap<volume[ax][ay][az].size(); ap++){
-          cuPoint p = (cuPoint)volume[ax][ay][az].get(ap);
-          p.setColor(pr,pg,pb);
-        }
-      }
-    }
+    randomwalklovers_tick();
+//    ax = (ax+1) % 127;
+//    pr=random(1); pg=random(1.0); pb=random(1.0);
+//    for(int ay=0; ay<256; ay++){
+//      for(int az=0; az<128; az++){
+//        for(int ap=0; ap<volume[ax][ay][az].size(); ap++){
+//          cuPoint p = (cuPoint)volume[ax][ay][az].get(ap);
+//          p.setColor(pr,pg,pb);
+//        }
+//      }
+//    }
   }
   
 //  for(int i=0; i<cubeList.size(); i++){

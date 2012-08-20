@@ -142,7 +142,6 @@ void matrixread_oscEvent(OscMessage om){
       p.setColor(0,0,1);
    }
   }
-  
 
 }
 

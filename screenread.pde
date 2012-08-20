@@ -30,7 +30,7 @@ void vol_screenread_draw(){
 
 
 void screenread_draw(){
-  screenShot = getScreen(15,15,256,128);
+  screenShot = getScreen(165,263,256,128);
   //screenLog.remove(31);
   //screenLog.add(0, screenShot);
   for(int ap=0; ap<pointList.size(); ap++){

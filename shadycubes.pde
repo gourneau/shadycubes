@@ -532,6 +532,7 @@ void oscEvent(OscMessage om) {
   println(" typetag: "+om.typetag());
   oapi_oscEvent(om);
   matrixread_oscEvent(om);
+  oapi_oscEvent(om);
 }
 
 

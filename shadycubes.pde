@@ -250,12 +250,14 @@ float xr=-0.9299996, yr=0.32999998, zr=1.559999;
 float xt=114.0, yt=-81.0, zt=138.0;
 cuPoint zp;
 
-ArrayList[][][] volume = new ArrayList[128][256][128];
-ArrayList[][] surface = new ArrayList[128][256];
+//ArrayList[][][] volume = new ArrayList[128][256][128];
+//ArrayList[][] surface = new ArrayList[128][256];
+byte[][][][] volume = new byte[128][256][128][3];
+byte[][][] surface = new byte[128][256][3];
 
 void setup(){
  
-  size(800,600,OPENGL);
+  size(640,480,OPENGL);
   frameRate(30);
   hint(ENABLE_OPENGL_4X_SMOOTH); 
   xr=yr=zr=0;
@@ -349,7 +351,7 @@ void setup(){
  } 
  
 //ArrayList[][][] volume = new ArrayList[90][200][100];
- for(int i=0; i<128; i++){
+ /*for(int i=0; i<128; i++){
    for(int j=0; j<256; j++){
      for(int k=0; k<128; k++){
        volume[i][j][k]=new ArrayList();
@@ -360,9 +362,10 @@ void setup(){
    for(int j=0; j<256; j++){
        surface[i][j]=new ArrayList();
    }
- }
+ }*/
  
 //(p.x+abs(min_x))/(max_x+abs(min_x)) < x
+println("x");
  println(min_x);
  println(max_x);
  
@@ -394,8 +397,12 @@ void setup(){
    p.iy=iy;
    p.iz=iz;
    
-   volume[ix][iy][iz].add(p);
-   surface[iz][iy].add(p);
+   //these used to be valuable data structures, but it's better to do
+   //the inverse -- iterate across just 17,000 points, and grab
+   //from the static arrays.  however the ADDRESSES are nice.
+   
+   //volume[ix][iy][iz].add(p);
+   //surface[iz][iy].add(p);
  }  
 
  matrixread_setup();
@@ -526,4 +533,5 @@ void oscEvent(OscMessage om) {
   oapi_oscEvent(om);
   matrixread_oscEvent(om);
 }
+
 

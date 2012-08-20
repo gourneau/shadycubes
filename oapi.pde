@@ -1,4 +1,3 @@
-
 void oapi_setRange(cuPoint[] pl, byte[] colors){
   for(int i=0; i<pl.length; i++){
     int r = colors[i*3+0]&0xff;

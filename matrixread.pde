@@ -4,7 +4,12 @@ void matrixread_setup() {
 }
 
 void matrixread_draw() {
-   
+   for(int i=0; i<pointList.size(); i++){
+      cuPoint p = (cuPoint)pointList.get(i);
+      p.r*=0.99;
+      p.g*=0.98;
+      p.b*=0.97;
+   }   
 }
 
 byte unsignedByte( int val ) { return (byte)( val > 127 ? val - 256 : val ); }
@@ -17,9 +22,23 @@ byte[] bpack(int[] ii){
 }
 
 
+float ex=0, ey=0, ez=0; // it's cross-tick
+int then=0;
+int now=0;
+float sr,sg,sb,sr2,sg2,sb2;
 void matrixread_oscEvent(OscMessage om){
   float x,y,z,r,g,b;
   x=y=z=r=g=b=0;
+  now=millis();
+  if(now-then>1000){
+    sr=random(1);
+    sg=random(1);
+    sb=random(1);
+    sr2=random(1);
+    sg2=random(1);
+    sb2=random(1);
+    then=millis();
+  }
   if(om.addrPattern()=="/something/message"){
     int cn = om.get(0).intValue(); println(cn);
     r = om.get(1).floatValue(); println(r);
@@ -28,29 +47,37 @@ void matrixread_oscEvent(OscMessage om){
     try {
        cuPoint[] pl = (cuPoint[])cubeList.get(cn);
        for(int i=0; i<pl.length; i++){
-          pl[i].setColor(r,g,b); 
+          pl[i].setColor(sr,sg,sb); 
        }
     } catch(Exception e) { println(e); }
   }
   if(om.checkAddrPattern("/5/xy1")==true){
-    x = om.get(0).floatValue(); 
-    y = om.get(1).floatValue();
+    ez = om.get(0).floatValue(); 
+    ey = 1-om.get(1).floatValue();
+    ez*=128;
+    ey*=256;
     for(int i=0; i<pointList.size(); i++){
       cuPoint p = (cuPoint)pointList.get(i);
-      p.setColor(0,0,0);
-      if((p.x+abs(min_x))/(max_x+abs(min_x)) < x) { p.setColor(1,1,1); }
-      if((p.y+abs(min_y))/(max_y+abs(min_y)) < y) { p.setColor(1,1,1); }    
-    }  
+      if(p.ix>ex-16 && p.ix<ex+16 &&
+         p.iy>ey-16 && p.iy<ey+16 &&
+         p.iz>ez-16 && p.iz<ez+16 ){
+           p.setColor(sr2,sg2,sb2);
+      }
+    }    
   }
   if(om.checkAddrPattern("/5/xy2")==true){
-    x = om.get(0).floatValue(); 
-    z = om.get(1).floatValue();
+    ex = om.get(0).floatValue(); 
+    ey = 1-om.get(1).floatValue();
+    ex*=128;
+    ey*=256;
     for(int i=0; i<pointList.size(); i++){
       cuPoint p = (cuPoint)pointList.get(i);
-      p.setColor(0,0,0);
-      if((p.x+abs(min_x))/(max_x+abs(min_x)) < x) { p.setColor(1,1,1); }
-      if((p.z+abs(min_z))/(max_z+abs(min_z)+1) < z) { p.setColor(1,1,1); }    
-    }  
+      if(p.ix>ex-16 && p.ix<ex+16 &&
+         p.iy>ey-16 && p.iy<ey+16 &&
+         p.iz>ez-16 && p.iz<ez+16 ){
+           p.setColor(sr2,sg2,sb2);
+      }
+    }    
   }
   if(om.checkAddrPattern("/5/xy3")==true){
     r = om.get(0).floatValue(); 
@@ -109,6 +136,13 @@ void matrixread_oscEvent(OscMessage om){
     byte[] colors = bpack(icolors);
     oapi_shady_cube_clip_strip((int)random(72), 3, 0, colors); // ...but always same strip
   }  
+  if(om.checkAddrPattern("/5/push6")==true){
+   for(int i=0; i<pointList.size(); i++){
+      cuPoint p = (cuPoint)pointList.get(i);
+      p.setColor(0,0,1);
+   }
+  }
+  
 
 }
 

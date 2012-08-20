@@ -9,7 +9,7 @@ void fillStrip(int stripIdx,double r, double g, double b,double a) {
     pts[idx].setColor((float) r,(float)g,(float)b,(float)a); 
   }
 }
-
+  
 double interp(double r, double decay) {
   return decay*r + (1.0-decay)*0.5; 
 }

@@ -2,6 +2,11 @@ import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import processing.opengl.*;
 
+/* OSC DEPENDENCY -- YES THIS IS A PAIN */
+import oscP5.*;
+import netP5.*;
+
+OscP5 oscP5;
 
 
 PGraphicsOpenGL render;
@@ -393,7 +398,7 @@ void setup(){
    surface[iz][iy].add(p);
  }  
 
- screenread_setup();
+ matrixread_setup();
  render.endGL(); 
 
 }  
@@ -436,7 +441,7 @@ void draw(){
  }*/
 
 
- screenread_draw();
+ matrixread_draw();
  //randomwalklovers_draw();
  render.endGL();
  rot+=10;
@@ -512,5 +517,13 @@ void keyPressed() {
 //  print(xr); print(" "); print(yr); print(" "); print(zr); print("\n");
   print(xt); print(" "); print(yt); print(" "); print(zt); print("\n");
 
+}
+
+void oscEvent(OscMessage om) {
+  print("### received an osc message.");
+  print(" addrpattern: "+om.addrPattern());
+  println(" typetag: "+om.typetag());
+  oapi_oscEvent(om);
+  matrixread_oscEvent(om);
 }
 

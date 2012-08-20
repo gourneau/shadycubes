@@ -12,7 +12,7 @@ void screenread_setup(){
 }
 
 
-void screenread_draw(){
+void vol_screenread_draw(){
   screenShot = getScreen(15,15,256,128);
   screenLog.remove(31);
   screenLog.add(0, screenShot);
@@ -27,8 +27,10 @@ void screenread_draw(){
   }
 }
 
-void surface_screenread_draw(){
-  screenShot = getScreen(15,700,256,128);
+
+
+void screenread_draw(){
+  screenShot = getScreen(15,15,256,128);
   //screenLog.remove(31);
   //screenLog.add(0, screenShot);
   for(int ap=0; ap<pointList.size(); ap++){

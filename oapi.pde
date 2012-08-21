@@ -46,7 +46,6 @@ void oapi_shady_cube_clip_strip(int cubenum, int clipnum, int stripnum, byte[] c
     }    
     oapi_setRange(pl, colors);
 }
-
 void oapi_shady_point(int cubenum, int clipnum, int stripnum, int pointnum, byte[] colors){
     cuStrip cu = cubes[cubenum].clips[clipnum].strips[stripnum];
     cuPoint[] pl = new cuPoint[1];
@@ -99,5 +98,3 @@ void oapi_oscEvent(OscMessage om){
     oapi_shady_point(n, n2, n3, n4, by);
   }  
 }
-
-

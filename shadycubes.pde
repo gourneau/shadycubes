@@ -8,7 +8,6 @@ import netP5.*;
 
 OscP5 oscP5;
 
-
 PGraphicsOpenGL render;
 GL gl;
 GLU glu;
@@ -16,11 +15,10 @@ float ma[] = new float[16];
 float mz[] = new float[16];
 int count=0;
 
-ArrayList pointList = new ArrayList();
-ArrayList stripList = new ArrayList();
-ArrayList clipList = new ArrayList();
-ArrayList cubeList = new ArrayList();
-
+ArrayList<cuPoint> pointList = new ArrayList<cuPoint>();
+ArrayList<cuPoint[]> stripList = new ArrayList<cuPoint[]>();
+ArrayList<cuPoint[]> clipList = new ArrayList<cuPoint[]>();
+ArrayList<cuPoint[]> cubeList = new ArrayList<cuPoint[]>();
 
 float min_x=256*256;
 float max_x=-256*256;
@@ -28,7 +26,6 @@ float min_y=256*256;
 float max_y=-256*256;
 float min_z=256*256;
 float max_z=-256*256;
-
 
 class cuPoint{
   float r,g,b,a;
@@ -49,6 +46,12 @@ class cuPoint{
     b=cb;
     a=ca;
     pointList.add(this);
+  }
+  void setColor (color c) {
+    a = ((c >> 24) & 0xFF) / 255.f;
+    r = ((c >> 16) & 0xFF) / 255.f;
+    g = ((c >> 8) & 0xFF) / 255.f;
+    b = ((c) & 0xFF) / 255.f;
   }
   void setColor (float cr, float cg, float cb) {
     r=cr;
@@ -255,6 +258,56 @@ cuPoint zp;
 byte[][][][] volume = new byte[128][256][128][3];
 byte[][][] surface = new byte[128][256][3];
 
+/**
+ * A processing module which performs some operation on the lights.
+ */
+abstract class Module {
+
+  abstract public String getTitle();
+  abstract public void run(int deltaMs);
+  
+  // Typically overridden, but doesn't have to be
+  /* abstract */ void oscEvent(OscMessage om) {}
+}
+
+/**
+ * A generator is a simple module that produces the light array.
+ */
+abstract class Generator extends Module {}
+
+/**
+ * A mutator modifies the light array after generators have been
+ * run. These can be enabled/disabled.
+ */
+abstract class Modulator extends Module {
+  
+  private boolean enabled = true;
+  
+  public final boolean isEnabled() {
+    return enabled;
+  }
+  
+  public final Modulator setEnabled(boolean enabled) {
+    this.enabled = enabled;
+    return this;
+  }
+  
+  public final void run(int deltaMs) {
+    if (this.enabled) {
+      this.modulate(deltaMs);
+    }
+  }
+  
+  abstract protected void modulate(int deltaMs);
+}
+
+// Core Engine variables
+Generator[] generators;
+Modulator[] modulators;
+int activeGenerator = 0;
+int lastMillis;
+exponentialfadeout fadeout;
+
 void setup(){
  
   size(900,700,OPENGL);
@@ -405,10 +458,25 @@ println("x");
    //surface[iz][iy].add(p);
  }  
 
- matrixread_setup();
  render.endGL(); 
 
-}  
+  // Establish the list of generators
+  generators = new Generator[]{
+    new oscgenerator(),
+    new procedural(),
+    new screenread(),
+  };
+  
+  modulators = new Modulator[]{
+    (fadeout = new exponentialfadeout()).setEnabled(false),
+  };
+
+  lastMillis = millis();
+  
+  // Start up the OSC listener
+  oscP5 = new OscP5(this, 10000);
+
+}
 
 float n=0.01;
 void draw(){
@@ -447,9 +515,14 @@ void draw(){
     cubes[i].draw();
  }*/
 
-
- matrixread_draw();
- //randomwalklovers_draw();
+  int now = millis();
+  int deltaMs = now - lastMillis;
+  generators[activeGenerator].run(deltaMs);
+  for (Modulator m : modulators) {
+    m.run(deltaMs);
+  }
+  lastMillis = now;
+  
  render.endGL();
  rot+=10;
 }
@@ -462,6 +535,25 @@ float norm(float fi){
 float pr=1, pg=1, pb=1;
 int ax=0;
 void keyPressed() {
+  
+  if (keyCode == LEFT || keyCode == RIGHT) {
+    if (keyCode == LEFT) {
+      --activeGenerator;
+      if (activeGenerator < 0) {
+        activeGenerator = generators.length - 1;
+      }
+    } else if (keyCode == RIGHT) {
+      activeGenerator = (activeGenerator + 1) % generators.length;
+    }
+    println("Active generator: " + generators[activeGenerator].getTitle());
+    return;
+  }
+  if (key == 'f') {
+    fadeout.setEnabled(!fadeout.isEnabled());
+    println("Exponential fadeout: " + (fadeout.isEnabled() ? "ENABLED" : "DISABLED"));
+    return;
+  }
+  
   int keyIndex = -1;
   if (key >= 'A' && key <= 'Z') {
     keyIndex = key - 'A';
@@ -488,7 +580,7 @@ void keyPressed() {
   }*/
   
   if(key==' ') {
-    randomwalklovers_draw();
+    // randomwalklovers_draw();
 //    ax = (ax+1) % 127;
 //    pr=random(1); pg=random(1.0); pb=random(1.0);
 //    for(int ay=0; ay<256; ay++){
@@ -530,9 +622,11 @@ void oscEvent(OscMessage om) {
   print("### received an osc message.");
   print(" addrpattern: "+om.addrPattern());
   println(" typetag: "+om.typetag());
-  oapi_oscEvent(om);
-  matrixread_oscEvent(om);
 
+  // Dispatch the osc event to all Modules
+  generators[activeGenerator].oscEvent(om);
+  for (Modulator m : modulators) {
+    m.oscEvent(om);
+  }
 }
-
 

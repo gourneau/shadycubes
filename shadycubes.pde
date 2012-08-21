@@ -249,8 +249,10 @@ float rot=0;
 int s=20;
 cuCube cubes[];
 
-float xr=-0.9299996, yr=0.32999998, zr=1.559999;
-float xt=114.0, yt=-81.0, zt=138.0;
+//float xr=-0.9299996, yr=0.32999998, zr=1.559999;
+//float xt=114.0, yt=-81.0, zt=138.0;
+float xt=108.0, yt= -69.0, zt=294.0, xr=-0.51, yr=-0.32999998, zr=0.0;
+
 cuPoint zp;
 
 //ArrayList[][][] volume = new ArrayList[128][256][128];
@@ -313,7 +315,6 @@ void setup(){
   size(900,700,OPENGL);
   frameRate(30);
   hint(ENABLE_OPENGL_4X_SMOOTH); 
-  xr=yr=zr=0;
 
   render = (PGraphicsOpenGL) g;
   gl = render.beginGL();
@@ -614,8 +615,7 @@ void keyPressed() {
   println(max_z);*/
   
 //  print(xr); print(" "); print(yr); print(" "); print(zr); print("\n");
-  print(xt); print(" "); print(yt); print(" "); print(zt); print("\n");
-
+  println("xt=" + xt + ", yt= " + yt + ", zt=" + zt + ", xr=" + xr + ", yr=" + yr + ", zr=" + zr);
 }
 
 void oscEvent(OscMessage om) {

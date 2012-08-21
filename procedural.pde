@@ -14,7 +14,9 @@ class procedural extends Generator {
     new SpaceTime(),
     new RandomWalk("cube", 10,2),
     new RandomWalk("cube", 1,10),
-    new FillErUp()
+    new FillErUp("x"),
+    new FillErUp("y"),
+    new FillErUp("z")
   };
   
   int activePattern = 0;

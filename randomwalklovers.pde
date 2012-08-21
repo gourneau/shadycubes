@@ -97,39 +97,48 @@
 class FillErUp extends Pattern {
   int animationTick = 0;
   java.util.Random rand = new java.util.Random(0);
-  Map zBucektToCubes;
+  Map bucketToCubes;
   int levelIdx;
   java.util.List colorRGBs;
+  String axis; // x,y, or z
+  
+  float getValue(cuCube c) {
+     if (axis == "x") return c.x;
+     if (axis == "y") return c.y;
+     if (axis == "z") return c.z;
+     throw new RuntimeException("not a valid axis: " + axis);
+  }
 
-  FillErUp() {
-    zBucektToCubes = new HashMap();
-    java.util.List cubesByZ = new ArrayList();
+  FillErUp(String axis) {
+    this.axis = axis;
+    bucketToCubes = new HashMap();
+    java.util.List cubesByAxis = new ArrayList();
     for (int idx=0; idx < cubes.length; ++idx) {
-       if (cubes[idx] != null) cubesByZ.add(cubes[idx]); 
+       if (cubes[idx] != null) cubesByAxis.add(cubes[idx]); 
     }
-    java.util.Collections.sort(cubesByZ, new Comparator() {
+    java.util.Collections.sort(cubesByAxis, new Comparator() {
       int compare(Object o1, Object o2) {
         cuCube c1 = (cuCube) o1;
         cuCube c2 = (cuCube) o2;
-        return (int) (c1.z - c2.z);
+        return (int) (getValue(c1) - getValue(c2));
       }
     });
-    cuCube minCube = (cuCube) cubesByZ.get(0);
-    cuCube maxCube = (cuCube) cubesByZ.get(cubesByZ.size()-1);    
-    double range = Math.abs(minCube.z-maxCube.z);
+    cuCube minCube = (cuCube) cubesByAxis.get(0);
+    cuCube maxCube = (cuCube) cubesByAxis.get(cubesByAxis.size()-1);    
+    double range = Math.abs(getValue(minCube)-getValue(maxCube));
     double bucketSize = range / 7.0;
-    for (int idx=0; idx < cubesByZ.size(); ++idx) {
-      cuCube c = (cuCube) cubesByZ.get(idx);
-      int bucketIdx = (int) Math.round((c.z - minCube.z) / bucketSize);
-      java.util.List levelBuckets = (java.util.List) zBucektToCubes.get(bucketIdx);
+    for (int idx=0; idx < cubesByAxis.size(); ++idx) {
+      cuCube c = (cuCube) cubesByAxis.get(idx);
+      int bucketIdx = (int) Math.round((getValue(c) - getValue(minCube)) / bucketSize);
+      java.util.List levelBuckets = (java.util.List) bucketToCubes.get(bucketIdx);
       if (levelBuckets == null) {
         levelBuckets = new ArrayList();
-        zBucektToCubes.put(bucketIdx, levelBuckets);
+        bucketToCubes.put(bucketIdx, levelBuckets);
       }
       levelBuckets.add(c);
     }
     levelIdx = 8;
-    println("zBucketsToCubes: " + zBucektToCubes.toString());
+    
   }
 
   void draw(int deltaMS) {
@@ -145,7 +154,7 @@ class FillErUp extends Pattern {
                  colorRGBs.add(new float[]{r,g,b});                   
                }
            }
-           java.util.List cs =(java.util.List) zBucektToCubes.get(levelIdx);
+           java.util.List cs =(java.util.List) bucketToCubes.get(levelIdx);
            if (cs != null) {
              for (Object o: cs) {
                cuCube c = (cuCube) o;

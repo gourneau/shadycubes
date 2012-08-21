@@ -108,6 +108,7 @@ class FillErUp extends Pattern {
   java.util.List colorRGBs;
   String axis; // x,y, or z
   String walkerType; // cube, strip, point
+  int numBuckets;
   
   float getValue(Object o) {
        if (walkerType == "cube") {
@@ -128,9 +129,10 @@ class FillErUp extends Pattern {
        throw new RuntimeException("not a valid walker: " + walkerType);       
   }
 
-  FillErUp(String axis, String walkerType) {
+  FillErUp(String axis, String walkerType, int numBuckets) {
     this.axis = axis;
     this.walkerType = walkerType;
+    this.numBuckets = numBuckets;
     bucketToElems = new HashMap();
     java.util.List elemsByAxis = new ArrayList();
     if (walkerType == "cube") {
@@ -153,7 +155,7 @@ class FillErUp extends Pattern {
     Object minElem = elemsByAxis.get(0);
     Object maxElem = elemsByAxis.get(elemsByAxis.size()-1);    
     double range = Math.abs(getValue(minElem)-getValue(maxElem));
-    double bucketSize = range / 7.0;
+    double bucketSize = range / (double) numBuckets;
     for (int idx=0; idx < elemsByAxis.size(); ++idx) {
       Object o = elemsByAxis.get(idx);
       int bucketIdx = (int) Math.round((getValue(o) - getValue(minElem)) / bucketSize);
@@ -164,17 +166,17 @@ class FillErUp extends Pattern {
       }
       levelBuckets.add(o);
     }
-    levelIdx = 8;
+    levelIdx = numBuckets ;
     
   }
 
   void draw(int deltaMS) {
       animationTick += 1;
       if (animationTick % 5 == 0) {
-           levelIdx = (levelIdx - 1 + 8) % 8;
-           if (levelIdx == 7) {
+           levelIdx = (levelIdx - 1 + numBuckets) % numBuckets;
+           if (levelIdx == (numBuckets-1)) {
                colorRGBs = new java.util.ArrayList();
-               for (int idx=0; idx < 8; ++idx) {
+               for (int idx=0; idx < numBuckets; ++idx) {
                  float r = rand.nextFloat();
                  float g = rand.nextFloat();
                  float b = rand.nextFloat();

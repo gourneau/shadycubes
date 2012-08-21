@@ -15,12 +15,12 @@ class procedural extends Generator {
     new RandomWalk("cube", 10,2),
     new RandomWalk("point", 1000,50),
     new RandomWalk("point", 100,1),
-    new FillErUp("x","cube"),
-    new FillErUp("y","cube"),
-    new FillErUp("z","cube"),
-    new FillErUp("x","point"),
-    new FillErUp("y","point"),
-    new FillErUp("z","point")
+    new FillErUp("x","cube",5),
+    new FillErUp("y","cube",5),
+    new FillErUp("z","cube",7),
+    new FillErUp("x","point",10),
+    new FillErUp("y","point",10),
+    new FillErUp("z","point",10)
   };
   
   int activePattern = 0;

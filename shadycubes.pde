@@ -518,6 +518,10 @@ void draw(){
 
   int now = millis();
   int deltaMs = now - lastMillis;
+  if (now / 5000 != lastMillis / 5000) {
+    println("Software FPS: " + frameRate);
+  }
+  
   generators[activeGenerator].run(deltaMs);
   for (Modulator m : modulators) {
     m.run(deltaMs);
@@ -629,4 +633,20 @@ void oscEvent(OscMessage om) {
     m.oscEvent(om);
   }
 }
+
+float mx, my;
+void mousePressed() {
+  mx = mouseX;
+  my = mouseY;
+}
+void mouseDragged() {
+  float dx = mouseX - mx;
+  float dy = mouseY - my;
+  xt += dx;
+  zr += dx/100.;
+  zt += dy;
+  mx = mouseX;
+  my = mouseY;
+}
+
 

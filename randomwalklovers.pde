@@ -103,45 +103,66 @@
 class FillErUp extends Pattern {
   int animationTick = 0;
   java.util.Random rand = new java.util.Random(0);
-  Map bucketToCubes;
+  Map bucketToElems;
   int levelIdx;
   java.util.List colorRGBs;
   String axis; // x,y, or z
+  String walkerType; // cube, strip, point
   
-  float getValue(cuCube c) {
-     if (axis == "x") return c.x;
-     if (axis == "y") return c.y;
-     if (axis == "z") return c.z;
-     throw new RuntimeException("not a valid axis: " + axis);
+  float getValue(Object o) {
+       if (walkerType == "cube") {
+         cuCube c = (cuCube) o;
+         if (axis == "x") return c.x;
+         if (axis == "y") return c.y;
+         if (axis == "z") return c.z;
+         throw new RuntimeException("not a valid axis: " + axis);       
+       }
+       if (walkerType == "point") {
+         cuPoint p = (cuPoint) o;
+         if (axis == "x") return p.x;
+         if (axis == "y") return p.y;
+         if (axis == "z") return p.z;
+         throw new RuntimeException("not a valid axis: " + axis);       
+       }
+       
+       throw new RuntimeException("not a valid walker: " + walkerType);       
   }
 
-  FillErUp(String axis) {
+  FillErUp(String axis, String walkerType) {
     this.axis = axis;
-    bucketToCubes = new HashMap();
-    java.util.List cubesByAxis = new ArrayList();
-    for (int idx=0; idx < cubes.length; ++idx) {
-       if (cubes[idx] != null) cubesByAxis.add(cubes[idx]); 
+    this.walkerType = walkerType;
+    bucketToElems = new HashMap();
+    java.util.List elemsByAxis = new ArrayList();
+    if (walkerType == "cube") {
+      for (int idx=0; idx < cubes.length; ++idx) {
+         if (cubes[idx] != null) elemsByAxis.add(cubes[idx]); 
+      }      
     }
-    java.util.Collections.sort(cubesByAxis, new Comparator() {
+    if (walkerType == "point") {
+      for (int idx=0; idx < pointList.size(); ++idx) {
+         elemsByAxis.add(pointList.get(idx)); 
+      }      
+    }
+    
+    
+    java.util.Collections.sort(elemsByAxis, new Comparator() {
       int compare(Object o1, Object o2) {
-        cuCube c1 = (cuCube) o1;
-        cuCube c2 = (cuCube) o2;
-        return (int) (getValue(c1) - getValue(c2));
+        return (int) (getValue(o1) - getValue(o2));
       }
     });
-    cuCube minCube = (cuCube) cubesByAxis.get(0);
-    cuCube maxCube = (cuCube) cubesByAxis.get(cubesByAxis.size()-1);    
-    double range = Math.abs(getValue(minCube)-getValue(maxCube));
+    Object minElem = elemsByAxis.get(0);
+    Object maxElem = elemsByAxis.get(elemsByAxis.size()-1);    
+    double range = Math.abs(getValue(minElem)-getValue(maxElem));
     double bucketSize = range / 7.0;
-    for (int idx=0; idx < cubesByAxis.size(); ++idx) {
-      cuCube c = (cuCube) cubesByAxis.get(idx);
-      int bucketIdx = (int) Math.round((getValue(c) - getValue(minCube)) / bucketSize);
-      java.util.List levelBuckets = (java.util.List) bucketToCubes.get(bucketIdx);
+    for (int idx=0; idx < elemsByAxis.size(); ++idx) {
+      Object o = elemsByAxis.get(idx);
+      int bucketIdx = (int) Math.round((getValue(o) - getValue(minElem)) / bucketSize);
+      java.util.List levelBuckets = (java.util.List) bucketToElems.get(bucketIdx);
       if (levelBuckets == null) {
         levelBuckets = new ArrayList();
-        bucketToCubes.put(bucketIdx, levelBuckets);
+        bucketToElems.put(bucketIdx, levelBuckets);
       }
-      levelBuckets.add(c);
+      levelBuckets.add(o);
     }
     levelIdx = 8;
     
@@ -160,12 +181,18 @@ class FillErUp extends Pattern {
                  colorRGBs.add(new float[]{r,g,b});                   
                }
            }
-           java.util.List cs =(java.util.List) bucketToCubes.get(levelIdx);
+           java.util.List cs =(java.util.List) bucketToElems.get(levelIdx);
            if (cs != null) {
              for (Object o: cs) {
-               cuCube c = (cuCube) o;
                float[] rgb = (float[])colorRGBs.get(levelIdx);
-               colorPoints(c.getPoints(),rgb[0],rgb[1],rgb[2],1.0);
+               if (walkerType == "cube") {
+                 cuCube c = (cuCube) o;               
+                 colorPoints(c.getPoints(),rgb[0],rgb[1],rgb[2],1.0);                 
+               }
+               if (walkerType == "point") {
+                 colorPoints(new cuPoint[]{(cuPoint)o},rgb[0],rgb[1],rgb[2],1.0);                 
+               }
+              
              }             
            }
       }

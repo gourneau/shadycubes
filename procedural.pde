@@ -5,6 +5,7 @@ class procedural extends Generator {
   }
   
   Pattern[] patterns = {
+    new Rain(),
     new CrossSection(),
     new CubeIterator(),
     new SpaceTime(),
@@ -231,6 +232,59 @@ class CrossSection extends Pattern {
         max(0, 100 - 8*abs(p.fx - x.value()))
         ), ADD); 
       p.setColor(c);
+    }
+  }
+}
+
+class Rain extends Pattern {
+  
+  class Drop {
+    Mod m;
+    float lv;
+    
+    Drop() {
+      addMod(m = new Mod(Mod.SAW, random(1000, 2000), 200, -50).randomBasis());
+      lv = m.value();
+    }
+    
+    void go() {
+      if (m.value() > lv) {
+        m.setPeriod(random(masterRate.value() - 200, masterRate.value() + 1400));
+      }
+      lv = m.value();
+    }
+    
+    float distance(cuPoint p) {
+      return abs(p.fz - m.value());
+    }
+  }
+  
+  Drop[] drops;
+  final int NUM = 45;
+  Mod offset = new Mod(Mod.SINE, 19000, 10, 50);
+  Mod masterRate = new Mod(Mod.TRI, 21000, 1000, 4000);
+    
+  Rain() {
+    drops = new Drop[NUM];
+    for (int i = 0; i < NUM; ++i) {
+      drops[i] = new Drop();
+    }
+    addMod(offset);
+    addMod(masterRate);
+  }
+  
+  void draw(int deltaMs) {
+    for (Drop d : drops) {
+      d.go();
+    }
+    
+    for (cuPoint p : pointList) {
+      int idx = floor((((p.y + offset.value()) % 255) / 256.) * NUM);
+      p.setColor(color(
+        220,
+        max(0, 120 - p.fz),
+        max(0, 100 - 3*drops[idx].distance(p))
+      ));
     }
   }
 }

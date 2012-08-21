@@ -4,12 +4,12 @@ void matrixread_setup() {
 }
 
 void matrixread_draw() {
-   for(int i=0; i<pointList.size(); i++){
-      cuPoint p = (cuPoint)pointList.get(i);
-      p.r*=0.99;
-      p.g*=0.98;
-      p.b*=0.97;
-   }   
+//   for(int i=0; i<pointList.size(); i++){
+//      cuPoint p = (cuPoint)pointList.get(i);
+//      p.r*=0.99;
+//      p.g*=0.98;
+//      p.b*=0.97;
+//   }   
 }
 
 byte unsignedByte( int val ) { return (byte)( val > 127 ? val - 256 : val ); }
@@ -27,6 +27,7 @@ int then=0;
 int now=0;
 float sr,sg,sb,sr2,sg2,sb2;
 void matrixread_oscEvent(OscMessage om){
+  println("IN MATRIXREAD_OSCEVENT");
   float x,y,z,r,g,b;
   x=y=z=r=g=b=0;
   now=millis();
@@ -39,7 +40,7 @@ void matrixread_oscEvent(OscMessage om){
     sb2=random(1);
     then=millis();
   }
-  if(om.addrPattern()=="/something/message"){
+  if(om.checkAddrPattern("/something/message")){
     int cn = om.get(0).intValue(); println(cn);
     r = om.get(1).floatValue(); println(r);
     g = om.get(2).floatValue(); println(g);

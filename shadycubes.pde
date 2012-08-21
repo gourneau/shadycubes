@@ -257,7 +257,7 @@ byte[][][] surface = new byte[128][256][3];
 
 void setup(){
  
-  size(640,480,OPENGL);
+  size(900,700,OPENGL);
   frameRate(30);
   hint(ENABLE_OPENGL_4X_SMOOTH); 
   xr=yr=zr=0;
@@ -532,7 +532,7 @@ void oscEvent(OscMessage om) {
   println(" typetag: "+om.typetag());
   oapi_oscEvent(om);
   matrixread_oscEvent(om);
-  oapi_oscEvent(om);
+
 }
 
 

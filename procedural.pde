@@ -5,6 +5,7 @@ class procedural extends Generator {
   }
   
   Pattern[] patterns = {
+    new StripMod(),
     new Blinders(),
     new Fire(),
     new Rain(),
@@ -370,6 +371,36 @@ class Blinders extends Pattern {
         ));
         ++i;
       }
+    }
+  }
+}
+
+class StripMod extends Pattern {
+  
+  final int NUM = 3;
+  Mod m = new Mod(Mod.SINE, 9000, -0.5, NUM-0.5);
+  Mod s = new Mod(Mod.SINE, 11000, -20, 147);
+  Mod h = new Mod(Mod.TRI, 19000, 0, 240);
+  Mod c = new Mod(Mod.TRI, 31000, -4, 2);
+  
+  StripMod() {
+    addMod(m);
+    addMod(s);
+    addMod(h);
+    addMod(c);
+  }
+  
+  void draw(int deltaMs) {
+    int i = 0;
+    for (cuPoint[] pts : stripList) {
+      for (cuPoint p : pts) {
+        p.setColor(color(
+          (h.value() + i*constrain(c.value(), 0, 2) + p.fx/2. + p.fy/4.) % 360,
+          min(100, abs(p.fz-s.value())),
+          max(0, 100 - 50*abs((i%NUM) - m.value()))
+        ));
+      }
+      ++i;
     }
   }
 }

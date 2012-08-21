@@ -306,6 +306,7 @@ abstract class Modulator extends Module {
 // Core Engine variables
 Generator[] generators;
 Modulator[] modulators;
+procedural proc;
 int activeGenerator = 0;
 int lastMillis;
 exponentialfadeout fadeout;
@@ -464,7 +465,7 @@ println("x");
   // Establish the list of generators
   generators = new Generator[]{
     new oscgenerator(),
-    new procedural(),
+    proc = new procedural(),
     new screenread(),
   };
   
@@ -551,6 +552,14 @@ void keyPressed() {
       activeGenerator = (activeGenerator + 1) % generators.length;
     }
     println("Active generator: " + generators[activeGenerator].getTitle());
+    return;
+  }
+  if (keyCode == UP) {
+    proc.goNext();
+    return;
+  }
+  if (keyCode == DOWN) {
+    proc.goPrev();
     return;
   }
   if (key == 'f') {

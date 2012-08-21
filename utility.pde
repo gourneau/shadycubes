@@ -9,3 +9,9 @@ void fillVolume(){
   }  
 }
 
+void colorPoints(cuPoint[] pts, float r, float g, float b, float a) {	        	  
+  for (int idx=0; idx < pts.length; ++idx) {
+    pts[idx].setColor(r,g,b,a); 
+  }        
+}
+

@@ -316,7 +316,7 @@ void setup(){
   size(900,700,OPENGL);
   frameRate(30);
   hint(ENABLE_OPENGL_4X_SMOOTH); 
-
+  
   render = (PGraphicsOpenGL) g;
   gl = render.beginGL();
   glu = ((PGraphicsOpenGL)g).glu;
@@ -399,6 +399,8 @@ void setup(){
  cubes[74]= new cuCube(8,38,100,350,0,0);
  cubes[75]= new cuCube(20,58,100,0,0,355);
  cubes[76]= new cuCube(22, 32, 120, 345, 327, 345);  
+ 
+
  
  zp.draw(true);
  for(int i=1; i<cubes.length; i++){
@@ -594,7 +596,7 @@ void keyPressed() {
   }*/
   
   if(key==' ') {
-    // randomwalklovers_draw();
+//     randomwalklovers_draw();
 //    ax = (ax+1) % 127;
 //    pr=random(1); pg=random(1.0); pb=random(1.0);
 //    for(int ay=0; ay<256; ay++){

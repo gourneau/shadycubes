@@ -8,6 +8,9 @@ class procedural extends Generator {
     new CrossSection(),
     new CubeIterator(),
     new SpaceTime(),
+    new RandomWalk("cube", 10,2),
+    new RandomWalk("cube", 1,10),
+    new FillErUp()
   };
   
   int activePattern = 0;

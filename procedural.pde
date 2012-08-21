@@ -5,6 +5,10 @@ class procedural extends Generator {
   }
   
   Pattern[] patterns = {
+    new StripMod(),
+    new Blinders(),
+    new Fire(),
+    new Rain(),
     new CrossSection(),
     new CubeIterator(),
     new SpaceTime(),
@@ -174,7 +178,7 @@ class CubeIterator extends Pattern {
     clips = new Mod[NUM];
     hues = new Mod[NUM];
     for (int i = 0; i < NUM; ++i) {
-      clips[i] = new Mod(Mod.TRI, 30000 + i*4000, 0, cubeList.size()).randomBasis();
+      clips[i] = new Mod(Mod.TRI, 80000 + i*4000, 0, clipList.size()).randomBasis();
       hues[i] = new Mod(Mod.SAW, 9000 + i*3000, 0, 360).randomBasis();
     }
     addMods(clips);
@@ -183,7 +187,7 @@ class CubeIterator extends Pattern {
    
   void draw(int deltaMs) {
     int cIdx = 0;
-    for (cuPoint[] pts : cubeList) {
+    for (cuPoint[] pts : clipList) {
       for (cuPoint p : pts) {
         p.setColor(0);
         color c = 0;
@@ -191,7 +195,7 @@ class CubeIterator extends Pattern {
           c = blendColor(c, color(
             hues[i].value(),
             min(100, 40 + 20*abs(cIdx - clips[i].value())),
-            max(0, 100 - 15*abs(cIdx - clips[i].value()))),
+            max(0, 100 - 12*abs(cIdx - clips[i].value()))),
             ADD);
         }
         p.setColor(c);
@@ -234,6 +238,172 @@ class CrossSection extends Pattern {
         max(0, 100 - 8*abs(p.fx - x.value()))
         ), ADD); 
       p.setColor(c);
+    }
+  }
+}
+
+class Rain extends Pattern {
+  
+  class Drop {
+    Mod m;
+    float lv;
+    
+    Drop() {
+      addMod(m = new Mod(Mod.SAW, random(1000, 2000), 200, -50).randomBasis());
+      lv = m.value();
+    }
+    
+    void go() {
+      if (m.value() > lv) {
+        m.setPeriod(random(masterRate.value() - 200, masterRate.value() + 1400));
+      }
+      lv = m.value();
+    }
+    
+    float distance(cuPoint p) {
+      return abs(p.fz - m.value());
+    }
+  }
+  
+  Drop[] drops;
+  final int NUM = 45;
+  Mod offset = new Mod(Mod.SINE, 19000, 10, 50);
+  Mod masterRate = new Mod(Mod.TRI, 21000, 1000, 4000);
+    
+  Rain() {
+    drops = new Drop[NUM];
+    for (int i = 0; i < NUM; ++i) {
+      drops[i] = new Drop();
+    }
+    addMod(offset);
+    addMod(masterRate);
+  }
+  
+  void draw(int deltaMs) {
+    for (Drop d : drops) {
+      d.go();
+    }
+    
+    for (cuPoint p : pointList) {
+      int idx = floor((((p.y + offset.value()) % 255) / 256.) * NUM);
+      p.setColor(color(
+        220,
+        max(0, 120 - p.fz),
+        max(0, 100 - 3*drops[idx].distance(p))
+      ));
+    }
+  }
+}
+
+
+class Fire extends Pattern {
+  
+  class Flame {
+    Mod m;
+    Mod r;
+    Mod b;
+    float lv;
+
+    Flame() {
+      addMod(m = new Mod(Mod.SINE, random(1000, 2000), 40, 100).randomBasis());
+      addMod(r = new Mod(Mod.TRI, 17000, 1000, 4000).randomBasis());
+      addMod(b = new Mod(Mod.TRI, random(500, 3000), 40, 100));
+      lv = m.value();
+    }
+    
+    void go() {
+      m.setPeriod(r.value());
+    }
+    
+    float distance(cuPoint p) {
+      return max(0, p.fz - m.value());
+    }
+  }
+  
+  Flame[] flames;
+  final int NUM = 45;
+  Mod offset = new Mod(Mod.SINE, 19000, 10, 50);
+  Mod hOff = new Mod(Mod.TRI, random(9000, 13000), 0, 24).randomBasis();
+
+    
+  Fire() {
+    flames = new Flame[NUM];
+    for (int i = 0; i < NUM; ++i) {
+      flames[i] = new Flame();
+    }
+    addMod(offset);
+    addMod(hOff);
+  }
+  
+  void draw(int deltaMs) {
+    for (Flame f : flames) {
+      f.go();
+    }
+    
+    for (cuPoint p : pointList) {
+      int idx = floor((((p.y + offset.value()) % 255) / 256.) * NUM);
+      p.setColor(color(
+        (355 + hOff.value()) % 360,
+        max(0, 120 - p.fz),
+        max(0, flames[idx].b.value() - 3*flames[idx].distance(p))
+      ));
+    }
+  }
+}
+
+class Blinders extends Pattern {
+  Mod m, r, s, h, hs;
+
+  public Blinders() {
+    addMod(m = new Mod(Mod.SINE, 9000, 0.5, 80));
+    addMod(r = new Mod(Mod.TRI, 21000, 3000, 9000));
+    addMod(s = new Mod(Mod.SINE, 4000, -20, 275));
+    addMod(h = new Mod(Mod.SAW, 29000, 0, 360));
+    addMod(hs = new Mod(Mod.TRI, 15000, 0.1, 0.5));
+  }
+  
+  public void draw(int deltaMs) {
+    m.setPeriod(r.value());
+    for (cuPoint[] pts : stripList) {
+      int i = 0;
+      for (cuPoint p : pts) {
+        p.setColor(color(
+          (h.value() + p.fx + p.fz*hs.value()) % 360,
+          min(100, abs(p.fy-s.value())/2.),
+          max(0, 100 - m.value() * abs(i - 7.5))
+        ));
+        ++i;
+      }
+    }
+  }
+}
+
+class StripMod extends Pattern {
+  
+  final int NUM = 3;
+  Mod m = new Mod(Mod.SINE, 9000, -0.5, NUM-0.5);
+  Mod s = new Mod(Mod.SINE, 11000, -20, 147);
+  Mod h = new Mod(Mod.TRI, 19000, 0, 240);
+  Mod c = new Mod(Mod.TRI, 31000, -4, 2);
+  
+  StripMod() {
+    addMod(m);
+    addMod(s);
+    addMod(h);
+    addMod(c);
+  }
+  
+  void draw(int deltaMs) {
+    int i = 0;
+    for (cuPoint[] pts : stripList) {
+      for (cuPoint p : pts) {
+        p.setColor(color(
+          (h.value() + i*constrain(c.value(), 0, 2) + p.fx/2. + p.fy/4.) % 360,
+          min(100, abs(p.fz-s.value())),
+          max(0, 100 - 50*abs((i%NUM) - m.value()))
+        ));
+      }
+      ++i;
     }
   }
 }

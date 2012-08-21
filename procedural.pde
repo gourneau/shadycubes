@@ -5,6 +5,7 @@ class procedural extends Generator {
   }
   
   Pattern[] patterns = {
+    new Fire(),
     new Rain(),
     new CrossSection(),
     new CubeIterator(),
@@ -172,7 +173,7 @@ class CubeIterator extends Pattern {
     clips = new Mod[NUM];
     hues = new Mod[NUM];
     for (int i = 0; i < NUM; ++i) {
-      clips[i] = new Mod(Mod.TRI, 30000 + i*4000, 0, cubeList.size()).randomBasis();
+      clips[i] = new Mod(Mod.TRI, 80000 + i*4000, 0, clipList.size()).randomBasis();
       hues[i] = new Mod(Mod.SAW, 9000 + i*3000, 0, 360).randomBasis();
     }
     addMods(clips);
@@ -181,7 +182,7 @@ class CubeIterator extends Pattern {
    
   void draw(int deltaMs) {
     int cIdx = 0;
-    for (cuPoint[] pts : cubeList) {
+    for (cuPoint[] pts : clipList) {
       for (cuPoint p : pts) {
         p.setColor(0);
         color c = 0;
@@ -189,7 +190,7 @@ class CubeIterator extends Pattern {
           c = blendColor(c, color(
             hues[i].value(),
             min(100, 40 + 20*abs(cIdx - clips[i].value())),
-            max(0, 100 - 15*abs(cIdx - clips[i].value()))),
+            max(0, 100 - 12*abs(cIdx - clips[i].value()))),
             ADD);
         }
         p.setColor(c);
@@ -288,4 +289,62 @@ class Rain extends Pattern {
     }
   }
 }
+
+
+class Fire extends Pattern {
+  
+  class Flame {
+    Mod m;
+    Mod r;
+    Mod b;
+    float lv;
+
+    Flame() {
+      addMod(m = new Mod(Mod.SINE, random(1000, 2000), 40, 100).randomBasis());
+      addMod(r = new Mod(Mod.TRI, 17000, 1000, 4000).randomBasis());
+      addMod(b = new Mod(Mod.TRI, random(500, 3000), 40, 100));
+      lv = m.value();
+    }
+    
+    void go() {
+      m.setPeriod(r.value());
+    }
+    
+    float distance(cuPoint p) {
+      return max(0, p.fz - m.value());
+    }
+  }
+  
+  Flame[] flames;
+  final int NUM = 45;
+  Mod offset = new Mod(Mod.SINE, 19000, 10, 50);
+  Mod hOff = new Mod(Mod.TRI, random(9000, 13000), 0, 24).randomBasis();
+
+    
+  Fire() {
+    flames = new Flame[NUM];
+    for (int i = 0; i < NUM; ++i) {
+      flames[i] = new Flame();
+    }
+    addMod(offset);
+    addMod(hOff);
+  }
+  
+  void draw(int deltaMs) {
+    for (Flame f : flames) {
+      f.go();
+    }
+    
+    for (cuPoint p : pointList) {
+      int idx = floor((((p.y + offset.value()) % 255) / 256.) * NUM);
+      p.setColor(color(
+        (355 + hOff.value()) % 360,
+        max(0, 120 - p.fz),
+        max(0, flames[idx].b.value() - 3*flames[idx].distance(p))
+      ));
+    }
+  }
+}
+
+
 

@@ -25,6 +25,12 @@
            if (walkerType == "strip") {
                this.elems  = stripList;
            }
+           if (walkerType == "point") {
+              this.elems = new java.util.ArrayList();
+              for (cuPoint p: pointList) {
+                this.elems.add(new cuPoint[]{p});
+              } 
+           }
            walkers = new Walker[nWalkers];
            for (int idx=0; idx < walkers.length; ++idx) {
             walkers[idx] = new Walker();
@@ -34,7 +40,7 @@
     
                                         
         float interp(float r, float decay) {
-          return decay*r + (1.0-decay)*0.5; 
+          return decay*r + (1.0-decay)*0.0; 
         }
     
         class Walker {
@@ -46,7 +52,7 @@
             
           void tick(boolean animateHead) {
             if (animateHead) {
-               int oldIdx = idx;
+               //int oldIdx = idx;
                idx = (idx + walkerDelta + elems.size()) % elems.size(); 
                colorPoints((cuPoint[])elems.get(idx), r,g,b,globalAlpha * 1.0f); 
                tailDecay = 0.7;  
@@ -84,7 +90,7 @@
         if (animationTick % 5 == 0) { 
           globalAlpha = 1.0;
           for (int idx=0; idx < cubeList.size(); ++idx) {
-             colorPoints((cuPoint[])elems.get(idx), 0.25, 0.25, 0.25, 1); 
+             colorPoints((cuPoint[])elems.get(idx), 0.1, 0.1, 0.1, 1); 
           }
           for (int idx=0; idx < walkers.length; ++idx) {
             walkers[idx].tick(true);    

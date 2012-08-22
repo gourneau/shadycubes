@@ -20,7 +20,8 @@ class procedural extends Generator {
     new FillErUp("z","cube",7),
     new FillErUp("x","point",10),
     new FillErUp("y","point",10),
-    new FillErUp("z","point",10)
+    new FillErUp("z","point",10),
+    new SearchLight(),
   };
   
   int activePattern = 0;
@@ -384,6 +385,59 @@ class Blinders extends Pattern {
   }
 }
 
+
+class SearchLight extends Pattern {
+  //revert to the sparkle pony
+  int r = 0;
+  int g = 128;
+  int b = 255;
+  //random start
+  int s = 0;
+  int t = 0;
+  int t1 = 0;
+  int t2 = 0;
+
+  public void draw(int deltaMs) {
+    for(cuPoint p : pointList) {
+      t += 1;
+      t1 += 1;
+      t2 += 1;
+      
+      //total reset sometimes
+      if (t2 == 876 * 30 * 30){
+         t2 = 0;
+         r = floor(random(255));
+         g = floor(random(255)); 
+         b = floor(random(255)); 
+         println("Reset");
+        
+         for(cuPoint p1 : pointList) {
+           p1.setColor(r,g,b);
+         }
+      }
+      if (t1 == 300){
+         t1 = 0;
+         r = floor(random(255));
+         b = floor(random(255)); 
+      }
+      if (t == 30){
+        g = floor(random(255));
+        t = 0;
+        if (r < 255){
+          r += 1 ;
+          b -= 1;
+        }else{
+          r = 0;
+          b = 255;
+        }
+  
+        p.setColor(r,g,b);
+      }
+    }
+  }
+  
+}
+
 class StripMod extends Pattern {
   
   final int NUM = 3;
@@ -413,5 +467,4 @@ class StripMod extends Pattern {
     }
   }
 }
-
 
